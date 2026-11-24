@@ -648,138 +648,106 @@
     <!-- Alpine.js Application Logic -->
     <script>
         function insuranceApp() {
-            return {
-                activeTab: 1,
-                memoryTab: 'clientes',
-                showArchitectureModal: false,
-                toasts: [],
-                formCliente: {
-                    id_cliente: 1,
-                    rfc: '',
-                    nombre: '',
-                    codigo_postal: '',
-                    ciudad: '',
-                    calle: '',
-                    numero_exterior: '',
-                    colonia: '',
-                    telefono: '',
-                    num_poliza: '',
-                    cobertura: 'Amplia Plus (Daños, Robo, RC, Gastos Médicos)'
-                },
-                formVehiculo: {
-                    matricula: '',
-                    tipo_vehiculo: 'AUTOMOVIL',
-                    num_puertas: 4,
-                    tipo_transmision: 'AUTOMATICA',
-                    cilindrada_cc: 250,
-                    tipo_manillar: 'RECTO'
-                },
-                formReclamacion: {
-                    id_accidente: 101,
-                    num_poliza: '',
-                    num_de_pago: 'PAGO-01',
-                    monto: 15000.00
-                },
-                memory: {
-                    clientes: [
-                        {
-                            id_cliente: 1,
-                            rfc: 'VECJ880326XYZ',
-                            nombre: 'Juan Carlos Vázquez Estrada',
-                            codigo_postal: '07730',
-                            ciudad: 'Ciudad de México',
-                            calle: 'Av. Juan de Dios Bátiz',
-                            numero_exterior: 'S/N',
-                            colonia: 'Nueva Industrial Vallejo',
-                            telefono: '5512345678',
-                            num_poliza: 'POL-2026-001',
-                            cobertura: 'Amplia Plus (Daños, Robo, RC, Gastos Médicos)'
-                        }
-                    ],
-                    vehiculos: [
-                        {
-                            matricula: 'ABC-123-4',
-                            tipo_vehiculo: 'AUTOMOVIL',
-                            num_puertas: 4,
-                            tipo_transmision: 'AUTOMATICA',
-                            cilindrada_cc: null,
-                            tipo_manillar: null
-                        }
-                    ],
-                    reclamaciones: [
-                        {
-                            id_accidente: 501,
-                            num_poliza: 'POL-2026-001',
-                            num_de_pago: 'PAGO-01',
-                            monto: 18500.00
-                        }
-                    ]
-                },
-                addToast(title, message, type = 'success') {
-                    const id = Date.now();
-                    this.toasts.push({ id, title, message, type });
-                    setTimeout(() => {
-                        this.removeToast(id);
-                    }, 4000);
-                },
-                removeToast(id) {
-                    this.toasts = this.toasts.filter(t => t.id !== id);
-                },
-                validateRFC(rfc) {
-                    const rfcRegex = /^[A-Z&Ñ]{3,4}[0-9]{6}[A-Z0-9]{3}$/;
-                    return rfcRegex.test(rfc);
-                },
-                submitClientePoliza() {
-                    if (!this.validateRFC(this.formCliente.rfc)) {
-                        this.addToast('Error de Validación', 'El RFC ingresado no cumple con el formato oficial mexicano (ej. VECJ880326XYZ).', 'error');
-                        return;
-                    }
-                    if (this.formCliente.codigo_postal.length !== 5 || isNaN(this.formCliente.codigo_postal)) {
-                        this.addToast('Error de Validación', 'El Código Postal debe constar exactamente de 5 dígitos.', 'error');
-                        return;
-                    }
-                    if (this.formCliente.telefono.length !== 10 || isNaN(this.formCliente.telefono)) {
-                        this.addToast('Error de Validación', 'El Teléfono debe constar exactamente de 10 dígitos numéricos.', 'error');
-                        return;
-                    }
+    return {
+        // Pega aquí tu URL de Cloudflare Tunnel (sin barra al final)
+        apiUrl: 'https://portfolio-brick-pro-lincoln.trycloudflare.com',
+        activeTab: 1,
+        memoryTab: 'clientes',
+        showArchitectureModal: false,
+        toasts: [],
+        // ... (mantén tus objetos formCliente, formVehiculo, formReclamacion y memory igual) ...
 
-                    // Push to memory
-                    this.memory.clientes.unshift({ ...this.formCliente });
-                    this.addToast('¡Registro Exitoso!', `Cliente ${this.formCliente.nombre} y Póliza ${this.formCliente.num_poliza} guardados en memoria correctamente.`);
-                    
-                    // Auto-fill num_poliza in other forms for convenience
-                    this.formReclamacion.num_poliza = this.formCliente.num_poliza;
-
-                    // Reset form partially
-                    this.formCliente.id_cliente++;
-                    this.formCliente.rfc = '';
-                    this.formCliente.nombre = '';
-                    this.formCliente.num_poliza = 'POL-2026-' + Math.floor(1000 + Math.random() * 9000);
-                },
-                submitVehiculo() {
-                    if (!this.formVehiculo.matricula) {
-                        this.addToast('Error de Validación', 'La matrícula del vehículo es obligatoria.', 'error');
-                        return;
-                    }
-                    this.memory.vehiculos.unshift({ ...this.formVehiculo });
-                    this.addToast('¡Vehículo Registrado!', `Vehículo ${this.formVehiculo.matricula} (${this.formVehiculo.tipo_vehiculo}) registrado con éxito.`);
-                    
-                    this.formVehiculo.matricula = '';
-                },
-                submitReclamacion() {
-                    this.memory.reclamaciones.unshift({ ...this.formReclamacion });
-                    this.addToast('¡Reclamación Registrada!', `Reclamación para Accidente #${this.formReclamacion.id_accidente} por $${Number(this.formReclamacion.monto).toLocaleString()} registrada con éxito.`);
-                    
-                    this.formReclamacion.id_accidente++;
-                },
-                clearMemory() {
-                    this.memory.clientes = [];
-                    this.memory.vehiculos = [];
-                    this.memory.reclamaciones = [];
-                    this.addToast('Memoria Limpia', 'Se han borrado todos los registros temporales de la sesión.', 'info');
-                }
+        async submitClientePoliza() {
+            if (!this.validateRFC(this.formCliente.rfc)) {
+                this.addToast('Error de Validación', 'El RFC ingresado no cumple con el formato oficial mexicano.', 'error');
+                return;
             }
-        }
+            if (this.formCliente.codigo_postal.length !== 5 || isNaN(this.formCliente.codigo_postal)) {
+                this.addToast('Error de Validación', 'El Código Postal debe constar de 5 dígitos.', 'error');
+                return;
+            }
+            if (this.formCliente.telefono.length !== 10 || isNaN(this.formCliente.telefono)) {
+                this.addToast('Error de Validación', 'El Teléfono debe constar de 10 dígitos numéricos.', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${this.apiUrl}/api/clientes-polizas`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(this.formCliente)
+                });
+                const result = await res.json();
+
+                if (!res.ok) {
+                    this.addToast('Error en Base de Datos', result.detail || 'No se pudo guardar el registro.', 'error');
+                    return;
+                }
+
+                this.memory.clientes.unshift({ ...this.formCliente });
+                this.addToast('Guardado en PostgreSQL', `Cliente ${this.formCliente.nombre} y Póliza ${this.formCliente.num_poliza} persistidos en BD.`);
+                
+                this.formReclamacion.num_poliza = this.formCliente.num_poliza;
+                this.formCliente.id_cliente++;
+                this.formCliente.rfc = '';
+                this.formCliente.nombre = '';
+                this.formCliente.num_poliza = 'POL-2026-' + Math.floor(1000 + Math.random() * 9000);
+            } catch (err) {
+                this.addToast('Error de Conexión', 'No se pudo contactar con la API. Verifica que el túnel esté activo.', 'error');
+            }
+        },
+
+        async submitVehiculo() {
+            if (!this.formVehiculo.matricula) {
+                this.addToast('Error de Validación', 'La matrícula del vehículo es obligatoria.', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${this.apiUrl}/api/vehiculos`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(this.formVehiculo)
+                });
+                const result = await res.json();
+
+                if (!res.ok) {
+                    this.addToast('Error en Base de Datos', result.detail || 'No se pudo registrar el vehículo.', 'error');
+                    return;
+                }
+
+                this.memory.vehiculos.unshift({ ...this.formVehiculo });
+                this.addToast('Guardado en PostgreSQL', `Vehículo ${this.formVehiculo.matricula} registrado en BD.`);
+                this.formVehiculo.matricula = '';
+            } catch (err) {
+                this.addToast('Error de Conexión', 'No se pudo contactar con la API.', 'error');
+            }
+        },
+
+        async submitReclamacion() {
+            try {
+                const res = await fetch(`${this.apiUrl}/api/reclamaciones`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(this.formReclamacion)
+                });
+                const result = await res.json();
+
+                if (!res.ok) {
+                    this.addToast('Error en Base de Datos', result.detail || 'Verifica que la póliza exista.', 'error');
+                    return;
+                }
+
+                this.memory.reclamaciones.unshift({ ...this.formReclamacion });
+                this.addToast('Guardado en PostgreSQL', `Reclamación #${this.formReclamacion.id_accidente} persistida en BD.`);
+                this.formReclamacion.id_accidente++;
+            } catch (err) {
+                this.addToast('Error de Conexión', 'No se pudo contactar con la API.', 'error');
+            }
+        },
+        // ... (mantén clearMemory igual) ...
+    }
+}
     </script>
 </body>
 </html>
