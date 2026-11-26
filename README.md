@@ -1,4 +1,4 @@
-# Prácticas 4 y 5: Implementación DDL, Restricciones de Dominio, Carga DML, Integridad Referencial y Transacciones
+# Proyecto del Segundo Parcial — Bases de Datos
 
 **Unidad de Aprendizaje:** Bases de Datos  
 **Plan de Estudios:** Ingeniería en Sistemas Computacionales (2020)  
@@ -6,29 +6,68 @@
 
 ---
 
+## Entregables del Segundo Parcial
+
+### 1. Proyecto Propio (Sistema de Seguros de Auto)
+* **Aplicación Web:** [`index.html`](index.html) (copia en [`web/index.html`](web/index.html)) — Ejecutable localmente con `docker compose up -d` (API en `http://localhost:8000`) o mediante túnel HTTPS (`cloudflared`).
+* **Documentación Partes 1 a 3 (Registro, Conexión, Esquema e Integridad):** [`proyecto-propio-parte-1-3.md`](proyecto-propio-parte-1-3.md)
+* **Esquema y Modelos:** [`SQL/esquema.sql`](SQL/esquema.sql), [`PROYECTO-PROPIO/MODELO_RELACIONAL.pdf`](PROYECTO-PROPIO/MODELO_RELACIONAL.pdf), [`PROYECTO-PROPIO/Diccionario_de_Datos.pdf`](PROYECTO-PROPIO/Diccionario_de_Datos.pdf)
+* **Backend y Scripts:** [`BACKEND/main.py`](BACKEND/main.py), [`practica4/migraciones/`](practica4/migraciones/), [`practica5/sql/`](practica5/sql/), [`practica4/poblar/poblar.sh`](practica4/poblar/poblar.sh)
+* **Evidencia de Registro y Ejecución:** [`EVIDENCIAS/logs_ejecucion.md`](EVIDENCIAS/logs_ejecucion.md)
+* **Práctica Integrada (6, 7 y 8):** `normalizacion.md`, `algebra.md` y grupo de RelaX *(en integración)*.
+
+### 2. Proyecto Asignado (Sismos — DWSismos / Seismic Data Visualization System)
+* **Repositorio del Proyecto:** `https://github.com/A7LAS-1/SEGUNDA_ENTREGA_PROYECTO.git` (sistema de referencia: [gabrielhuav/Seismic-Data-Visualization-System](https://github.com/gabrielhuav/Seismic-Data-Visualization-System))
+* **Análisis del Esquema e Integridad:** [`PROYECTO-ASIGNADO/Analisis-Esquema.pdf`](PROYECTO-ASIGNADO/Analisis-Esquema.pdf), [`practica4/proyecto-asignado/analisis_sismos.md`](practica4/proyecto-asignado/analisis_sismos.md), [`practica5/integridad-almacen.md`](practica5/integridad-almacen.md)
+* **Montaje y Consultas:** [`practica4/proyecto-asignado/poblar_sismos.py`](practica4/proyecto-asignado/poblar_sismos.py), [`practica5/sql/integridad_sismos.sql`](practica5/sql/integridad_sismos.sql)
+
+### 3. Artículo y Exposición
+* **Referencia en APA 7:**  
+  Hurtado Avilés, G., & Climent Hernández, J. A. (2026). *Cuando México tiembla: la historia contada por los datos*. Azcatl: Revista de Divulgación en Ciencias, Ingeniería e Innovación, Universidad Autónoma Metropolitana. https://doi.org/10.24275/AZC2026E1004  
+  *(Manuscrito R3 del proyecto asignado: [Seismic_CG_manuscript_R3.pdf](https://github.com/gabrielhuav/Seismic_Data_Geosciences/blob/main/paper/manuscript/out/Seismic_CG_manuscript_R3.pdf) | [Word](https://github.com/gabrielhuav/Seismic_Data_Geosciences/blob/main/paper/manuscript/out/Seismic_CG_manuscript_R3.docx) | [iThenticate](https://github.com/gabrielhuav/Seismic_Data_Geosciences/blob/main/paper/manuscript/out/ITHENTICATE_R3_05.pdf))*
+* **Análisis del Artículo y Dos Propuestas de Mejora:** [`articulo-y-mejoras.md`](articulo-y-mejoras.md)
+* **Aportaciones de los Integrantes:** [`practica5/integrantes/`](practica5/integrantes/)
+
+---
+
 ## Integrantes del Equipo
 
-*   **Bravo Mina Liam Valapai**
-*   **Navarro Domínguez Antonio**
-*   **Ávalos Hernandez Joshua Jasiel**
+* **Bravo Mina Liam Valapai** — [`trabajo-integrante-liam-bravo.md`](practica5/integrantes/trabajo-integrante-liam-bravo.md)
+* **Navarro Domínguez Antonio** — [`trabajo-integrante-antonio-navarro.md`](practica5/integrantes/trabajo-integrante-antonio-navarro.md)
+* **Ávalos Hernandez Joshua Jasiel** — [`trabajo-integrante-joshua-avalos.md`](practica5/integrantes/trabajo-integrante-joshua-avalos.md)
 
 ---
 
 ## Información de los Proyectos
 
-*   **Proyecto Propio:** Sistema de Seguros de Auto (Base de Datos Transaccional OLTP)
-*   **Proyecto Asignado:** Sistema de Visualización de Datos Sísmicos / DWSismos (Almacén de Datos Dimensional OLAP / Esquema en Estrella)
-*   **Gestor de Base de Datos:** PostgreSQL 16 (desplegado mediante Docker Compose)
+* **Proyecto Propio:** Sistema de Seguros de Auto (Base de Datos Transaccional OLTP + API FastAPI + Frontend Web)
+* **Proyecto Asignado:** Sistema de Visualización de Datos Sísmicos / DWSismos (Almacén de Datos Dimensional OLAP / Esquema en Estrella)
+* **Gestor de Base de Datos:** PostgreSQL 16 (desplegado mediante Docker Compose)
 
 ---
 
 ## Estructura del Repositorio
 
-El repositorio se encuentra organizado de acuerdo con las especificaciones de entrega de las Prácticas 4 y 5:
-
 ```text
 .
-├── compose.yaml                    # Configuración de Docker Compose para PostgreSQL
+├── .gitignore                      # Exclusión de carpeta IGNORE/
+├── compose.yaml                    # Orquestación Docker: PostgreSQL 16, API FastAPI y Cloudflared
+├── index.html                      # Aplicación web principal (Alpine.js + Tailwind)
+├── proyecto-propio-parte-1-3.md    # Documentación Proyecto Propio (Registro, Conexión, Esquema/Integridad)
+├── articulo-y-mejoras.md           # Documentación Tercera Parte (Resumen de artículo R3 y 2 mejoras)
+├── BACKEND/                        # API REST en FastAPI + psycopg3
+│   ├── Dockerfile
+│   ├── main.py
+│   └── requirements.txt
+├── web/                            # Copia estática de la interfaz web
+│   └── index.html
+├── PROYECTO-PROPIO/                # Artefactos conceptuales y relacionales del Proyecto Propio
+│   ├── MODELO_RELACIONAL.pdf
+│   ├── Diccionario_de_Datos.pdf
+│   ├── Transformacion_Modelo_EER.pdf
+│   └── Inventario Modelo EER.pdf
+├── PROYECTO-ASIGNADO/              # Análisis conceptual del Proyecto Asignado (Sismos)
+│   └── Analisis-Esquema.pdf
 ├── SQL/
 │   └── esquema.sql                 # DDL base generado en Práctica 3
 ├── practica4/                      # PARTE 1: Práctica 4 (DDL, Dominios, Permisos, Carga ETL)
@@ -66,7 +105,7 @@ El repositorio se encuentra organizado de acuerdo con las especificaciones de en
 │       ├── navarro_poliza_cliente.sql
 │       ├── bravo_poliza_cobertura.sql
 │       └── avalos_pago_reclamacion.sql
-└── evidencias/
+└── EVIDENCIAS/
     ├── compose.yaml
     └── logs_ejecucion.md           # Trazas de terminal y resultados de ejecución de pruebas
 ```
@@ -75,12 +114,13 @@ El repositorio se encuentra organizado de acuerdo con las especificaciones de en
 
 ## Guía de Ejecución Rápida
 
-### 1. Despliegue del Contenedor de PostgreSQL
+### 1. Despliegue Completo (PostgreSQL + API FastAPI + Túnel)
 ```bash
 docker compose up -d
 ```
+El servicio `postgres` inicializa automáticamente `SQL/esquema.sql`, las migraciones `001`, `002`, `003` y `datos_prueba.sql` mediante `/docker-entrypoint-initdb.d/`. La API queda disponible en `http://localhost:8000` (verificando estado en `GET /api/health`).
 
-### 2. Ejecución del Esquema Base y Migraciones
+### 2. Ejecución Manual del Esquema Base y Migraciones
 Toda modificación al esquema se ejecuta mediante archivos de migración numerados:
 ```bash
 # Variables de conexión (Cero credenciales en el repositorio)
