@@ -1,0 +1,20 @@
+# Ejercicio 1.4. El almacen asignado, frente a las formas normales
+
+El proyecto asignado al equipo corresponde al **Almacen Dimensional de Sismos** alimentado con el catalogo publico del Servicio Sismologico Nacional (SSN), estructurado bajo un **esquema estrella** (*Star Schema*) compuesto por una tabla de hechos central (cada evento sismico registrado) rodeada de tablas de dimensiones desnormalizadas a proposito.
+
+---
+
+## Analisis de Formas Normales y dependencias transitivas en el almacen
+
+| Componente del Almacen | Granularidad / Rol | Forma Normal | Dependencia transitiva que conserva | Que gana el almacen al conservarla |
+| :--- | :--- | :---: | :--- | :--- |
+| **Tabla de Hechos (`HECHOS_SISMOS`)** | Cada fila es un evento sismico individual con sus metricas (`magnitud`, `profundidad_km`, `latitud`, `longitud`) y llaves hacia las dimensiones. | **3FN / BCNF** | Ninguna (sus atributos no clave son medidas numericas del evento especifico). | Mantiene la tabla central compacta, numerica y optimizada para escaneos rapidos y funciones de agregacion (`COUNT`, `AVG`, `MAX`, `MIN`). |
+| **Dimension Tiempo (`DIM_TIEMPO`)** | Cada fila es una fecha calendario con sus jerarquias precalculadas (`id_tiempo`, `fecha`, `dia`, `mes`, `nombre_mes`, `trimestre`, `anio`). | **2FN** | $\text{id\_tiempo} \to \text{fecha} \to \text{mes} \to \text{trimestre} \to \text{anio}$ y $\text{mes} \to \text{nombre\_mes}$. | Evita ejecutar funciones de extraccion de fecha en tiempo de consulta y elimina reuniones (*joins*) con catalogos de meses o trimestres al agrupar sismos por año, estacion o trimestre. |
+| **Dimension Ubicacion (`DIM_UBICACION`)** | Cada fila es una referencia geografica epicentral (`id_ubicacion`, `referencia_localidad`, `municipio`, `estado`, `region_sismica`). | **2FN** | $\text{id\_ubicacion} \to \text{municipio} \to \text{estado} \to \text{region\_sismica}$. | Permite filtrar o agrupar millones de registros sismicos por entidad federativa o region tectonica mediante un solo `JOIN` directo entre hechos y ubicacion, en lugar de encadenar 3 o 4 tablas geograficas (esquema copo de nieve). |
+| **Dimension Magnitud / Clasificacion (`DIM_MAGNITUD` o atributos descriptivos)** | Cada fila clasifica el rango o escala del sismo (`id_magnitud`, `tipo_magnitud`, `rango_intensidad`, `categoria_percepcion`). | **2FN** | $\text{id\_magnitud} \to \text{rango\_intensidad} \to \text{categoria\_percepcion}$. | Acelera los reportes analiticos por severidad (sismos leves, moderados, fuertes, mayores) sin evaluar expresiones `CASE` ni consultar tablas auxiliares en cada ejecucion. |
+
+---
+
+## ¿Cuando conviene desnormalizar y que vigilar en nuestro proyecto propio?
+
+Desnormalizar conviene unicamente en **cargas de trabajo analiticas (OLAP)** o de reporte masivo de solo lectura donde el costo de ejecutar multiples reuniones (`JOIN`) sobre millones de registros supera el costo de almacenar datos repetidos, y donde las actualizaciones sobre los catalogos son poco frecuentes o se ejecutan en ventanas controladas (procesos ETL). En cambio, si decidieramos desnormalizar nuestro **Sistema de Seguros de Auto** (por ejemplo, regresando `ciudad` dentro de `CLIENTE` o `marca` dentro de `VEHICULO`, o incrustando la `prima_total` y los datos del cliente dentro de `RECLAMACION`), tendriamos que vigilar estrictamente tres riesgos criticos: **1) anomalias de actualizacion** (cambiar el nombre de una marca o corregir la ciudad de un codigo postal obligaria a actualizar miles de filas en transacciones concurrentes con riesgo de dejar estados inconsistentes), **2) perdida de integridad en catalogos** (si se borra el ultimo vehiculo de un modelo o el ultimo cliente de un codigo postal, desapareceria por completo el registro de esa marca o ciudad del sistema), y **3) contencion por bloqueos**, ya que nuestro sistema es transaccional (OLTP) y duplicar atributos frecuentes incrementa el tamaño de las filas y los bloqueos de escritura durante el registro de polizas, accidentes y pagos.
